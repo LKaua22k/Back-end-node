@@ -1,8 +1,12 @@
 const express = require('express')
 
-const app = express()
+const routes = require('./routes')
 
+
+const app = express()
 app.use(express.json())
+
+app.use(routes)
 
 // Metod simples
 app.get("/", (req,res) => {
@@ -25,22 +29,6 @@ app.get("/params", (req,res) => {
     res.send(`Isso é um Querry params, seu id é ${page} e seu usuario é ${lemit}`)
 })
 
-//metodo post
-app.post("/users", (req,res) => {
-
-    res.send(`Metodo Post`)
-    
-})
-
-app.post("/newusers", (req,res) => {
-    const {name , email} = req.body
-    
-    // const text = `Seu nome é ${name} e seu email é ${email}`
-
-    res.json({name,email});
-
-    // res.send(text)
-})
 
 
 const PORT = 3333;

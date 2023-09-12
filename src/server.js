@@ -2,9 +2,11 @@ const express = require('express')
 
 const app = express()
 
+app.use(express.json())
+
 // Metod simples
 app.get("/", (req,res) => {
-    res.send("hello world")
+    res.send("Metodo get")
 })
 
 // Route params
@@ -23,6 +25,22 @@ app.get("/params", (req,res) => {
     res.send(`Isso é um Querry params, seu id é ${page} e seu usuario é ${lemit}`)
 })
 
+//metodo post
+app.post("/users", (req,res) => {
+
+    res.send(`Metodo Post`)
+    
+})
+
+app.post("/newusers", (req,res) => {
+    const {name , email} = req
+    
+    const text = `Seu nome é ${name} e seu email é ${email}`
+
+    res.json({name,email})
+
+    // res.send(text)
+})
 
 
 const PORT = 3333;

@@ -3,17 +3,20 @@ const AppError = require('../utils/App.Error')
 
 class UserController {
     async create(req,res){
-        const {name , email} = req.body
+        const {name , email,password} = req.body
 
         const database = await sqlConnection()
+        const checkUser = await database.get("SELECT * FROM users WHERE email = (?)",[email])
 
-        const checkUser = database.get("SELECT * FROM users WHERE email = (?)",[email])
-
-        if(!checkUser){
+        if(checkUser){
             throw new AppError('Usuario ja existe')
         }
 
-        res.status(201).json({})
+        
+
+        await database.run("INSERT INTO users (name,email,password) VALUES (?,?,?)",[name,email,password])
+
+        res.status(201).json()
         
         
         // if(!name){

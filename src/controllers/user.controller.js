@@ -10,9 +10,9 @@ class UserController {
         if(checkUser){
             throw new AppError('Usuario ja existe')
         }
-
-        await database.run("INSERT INTO users (name,email,password) VALUES (?,?,?)",[name,email,password])
         
+        await database.run("INSERT INTO users (name,email,password) VALUES (?,?,?)",[name,email,password])
+
         res.status(201).json()
     }
 }

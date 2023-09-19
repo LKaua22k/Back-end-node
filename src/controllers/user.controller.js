@@ -1,4 +1,4 @@
-const { hash } = require('bcryptjs')
+const { hash, compare } = require('bcryptjs')
 const sqlConnection = require('../database/sqlite')
 const AppError = require('../utils/App.Error')
 
@@ -22,7 +22,7 @@ class UserController {
     }
 
     async update(req,res){
-        const { name , email} = req.body;   
+        const { name , email, password , old_password} = req.body;   
         const { id } = req.params;
 
         const database = await sqlConnection()
@@ -40,8 +40,22 @@ class UserController {
 
         user.name = name
         user.email = email
+
+        if(password && !old_password){
+            throw new AppError('Senha antiga não confere')
+        }
+
+        if(password && old_password){
+            const checkPassword = await compare(old_password, user.password)
+
+            if(!checkPassword){
+                throw new AppError('Senha antiga não confere')
+            }
+        }
+
+        user.password = await hash(password,8)
         
-        await database.run("UPDATE users SET name = ?, email = ?, update_att = ? WHERE id = ?",[user.name,user.email,new Date(),id])
+        await database.run("UPDATE users SET name = ?, email = ?, password = ? ,update_att = DATETIME ('now') WHERE id = ?",[user.name,user.email,user.password,id])
 
         return res.json()
     }

@@ -6,7 +6,6 @@ const userController = new UserController()
 
 const newusers = Router()
 
-
 newusers.post("/", userController.create)
 newusers.put("/:id", userController.update)
 

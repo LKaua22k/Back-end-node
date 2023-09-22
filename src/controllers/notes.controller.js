@@ -30,6 +30,16 @@ class NotesController {
 
         await knex("tags").insert(TagsInsert)
         
+
+        return res.json()
+    }
+
+    async show(req,res){
+        const { id } = req.params
+
+        const note = await knex("notes").where({id}).first()
+
+        return res.json(note)
     }
 }
 

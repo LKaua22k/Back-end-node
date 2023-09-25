@@ -8,5 +8,6 @@ const notes = Router()
 
 notes.post("/:user_id", notesController.create)
 notes.get("/:id", notesController.show)
+notes.delete("/:id", notesController.delete)
 
 module.exports = notes;

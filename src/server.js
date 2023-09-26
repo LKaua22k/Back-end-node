@@ -23,6 +23,8 @@ app.use((error,req,res,next) => {
         })
     }
 
+    console.log(error)
+
     // Para erro interno na parte do servidor 
         return res.status(500).json({
             Status: "error",

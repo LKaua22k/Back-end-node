@@ -2,7 +2,7 @@ const knex = require("../database/knex")
 
 class NotesController {
     async create(req,res){
-        const {title , description , tags , links} = req.body
+        const {title, description, links } = req.body
         const {user_id} = req.params
 
         const note_id = await knex("notes").insert({
@@ -18,20 +18,10 @@ class NotesController {
             }
         })
 
-        await knex("links").insert(linkInsert)
-     
-        const TagsInsert = tags.map( name => {
-            return{
-                note_id,
-                name,
-                user_id
-            }
-        })
-
-        await knex("tags").insert(TagsInsert)
+        await knex('links').insert(linkInsert);
         
 
-        return res.json()
+         res.json();
     }
 
     async show(req,res){
@@ -42,7 +32,7 @@ class NotesController {
         const links = await knex("links").where({note_id: id}).orderBy('created_at')
 
         return res.json(
-            ...note,
+            note,
             tags,
             links
         )
@@ -53,17 +43,19 @@ class NotesController {
 
         await knex("notes").where({id}).delete();
 
+        console.log(`Id: ${id} deletado`)
+
         return res.json()
     }
 
-    async index(req,res){
-        const { user_id }= req.query
+    // async index(req,res){
+    //     const { user_id }= req.query
 
-        const nota = await knex("notes").where({user_id}).whereLike("title", `%title%`).orderBy("title")
+    //     const nota = await knex("notes").where({user_id}).whereLike("title", `%title%`).orderBy("title")
         
 
-        return res.json(nota)
-    }
+    //     return res.json(nota)
+    // }
 }
 
-module.exports = NotesController;
+module.exports = NotesController

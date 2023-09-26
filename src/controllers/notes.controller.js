@@ -21,7 +21,7 @@ class NotesController {
         await knex('links').insert(linkInsert);
         
 
-         res.json();
+        return res.json();
     }
 
     async show(req,res){
@@ -48,14 +48,23 @@ class NotesController {
         return res.json()
     }
 
-    // async index(req,res){
-    //     const { user_id }= req.query
+    async index(req,res){
+        const { title , user_id , tags }= req.query
 
-    //     const nota = await knex("notes").where({user_id}).whereLike("title", `%title%`).orderBy("title")
-        
+        let nota;
 
-    //     return res.json(nota)
-    // }
+        if(tags){
+         const filteredTags = tags.split(",").map(tags => tags)  
+         console.log(filteredTags)
+
+         nota = await knex('tags').whereIn('name', filteredTags)
+
+        }else{
+        nota = await knex('notes').where({user_id}).whereLike("title", `%${title}%`).orderBy("title")
+        }        
+
+        return res.json(nota)
+    }
 }
 
 module.exports = NotesController

@@ -73,7 +73,17 @@ class NotesController {
         }
         
 
-        return res.json(nota)
+        const noteTags = await knex('tags').where({user_id})
+        const notesAndTags = nota.map(note => {
+            const userTags = noteTags.filter(tag => tag.user_id === note.id)
+
+            return{
+                nota,
+                tags: userTags
+            }
+        })
+
+        return res.json(notesAndTags)
     }
 }
 

@@ -2,7 +2,7 @@ const knex = require("../database/knex")
 
 class NotesController {
     async create(req,res){
-        const {title, description, links } = req.body
+        const {title, description, tags, links } = req.body
         const {user_id} = req.params
 
         const note_id = await knex("notes").insert({
@@ -21,7 +21,17 @@ class NotesController {
         await knex('links').insert(linkInsert);
         
 
-        return res.json();
+        const TagsInsert = tags.map(name => {
+            return{
+                name,
+                note_id,
+                user_id
+            }
+        })
+
+        await knex('tags').insert(TagsInsert)
+
+        return res.json({"message": "criado"});
     }
 
     async show(req,res){
@@ -49,19 +59,19 @@ class NotesController {
     }
 
     async index(req,res){
-        const { title , user_id , tags }= req.query
+        const { title,user_id,tags }= req.query
 
         let nota;
 
         if(tags){
-         const filteredTags = tags.split(",").map(tags => tags)  
-         console.log(filteredTags)
+            const filteredTags = tags.split(",").map(tags => tags)
 
-         nota = await knex('tags').whereIn('name', filteredTags)
+            nota = await knex('tags').select(["notes.id","notes.title","notes.user_id"]).where('notes.user_id', user_id).whereLike('notes.title', `%${title}%`).whereIn('name', filteredTags).innerJoin('notes' , 'notes.id', 'tags.note_id')
 
         }else{
-        nota = await knex('notes').where({user_id}).whereLike("title", `%${title}%`).orderBy("title")
-        }        
+            nota = await knex("notes").where({user_id}).whereLike("title", `%${title}%`).orderBy("title")
+        }
+        
 
         return res.json(nota)
     }

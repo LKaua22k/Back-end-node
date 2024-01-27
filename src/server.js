@@ -4,14 +4,19 @@ const express = require('express')
 const routes = require('./routes')
 const AppError = require('./utils/App.Error')
 const myMigration = require('./database/sqlite/migrations')
+const cors = require("cors")
+const UpldoadConfig = require('./config/upload')
 
+myMigration()
 
 const app = express()
 app.use(express.json())
+app.use(cors())
+
+app.use("/files", express.static(UpldoadConfig.UPLOAD_FOLDER))
 
 app.use(routes)
 
-myMigration()
 
 app.use((error,req,res,next) => {
 

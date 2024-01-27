@@ -4,7 +4,7 @@ CREATE TABLE IF NOT EXISTS users(
     name VARCHAR,
     email VARCHAR,
     password VARCHAR,
-    avatar NULL,
+    avatar VARCHAR NULL,
     created_att TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     update_att TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )

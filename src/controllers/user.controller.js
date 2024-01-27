@@ -23,10 +23,10 @@ class UserController {
 
     async update(req,res){
         const { name , email, password , old_password} = req.body;   
-        const { id } = req.params;
+        const user_id = req.user.id;
 
         const database = await sqlConnection()
-        const user = await database.get("SELECT * FROM users WHERE id = (?)",[id])
+        const user = await database.get("SELECT * FROM users WHERE id = (?)",[user_id])
 
         if(!user){
             throw new AppError("Usuario não encontrado")
@@ -51,11 +51,20 @@ class UserController {
             if(!checkPassword){
                 throw new AppError('Senha antiga não confere')
             }
+
+            user.password = await hash(password,8);
         }
 
-        user.password = await hash(password,8)
         
-        await database.run("UPDATE users SET name = ?, email = ?, password = ? ,update_att = DATETIME ('now') WHERE id = ?",[user.name,user.email,user.password,id])
+        await database.run(
+            `UPDATE users SET 
+            name = ?, 
+            email = ?, 
+            password = ?, 
+            update_att = DATETIME('now')
+            WHERE id = ?`,
+            [user.name, user.email, user.password, user_id]
+          );
 
         return res.json()
     }
